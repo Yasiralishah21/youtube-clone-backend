@@ -2,7 +2,8 @@ const asyncHandler = (requestHandler) => {
     return (req, res, next) => {
         Promise
         .resolve(requestHandler(req, res, next))  //if promised succeed 
-        .catch(err => next)                       //if promise failed then do this
+        // .catch(err => next)                       //if promise failed then do this
+        .catch(err => next(err))
     }
 }
 

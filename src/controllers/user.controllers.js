@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 
 
+//to generating referesh and access token 
 const generateAccessAndRefereshTokens = async(userId) =>{
     try {
         const user = await User.findById(userId)
@@ -133,7 +134,8 @@ const loginUser = asyncHandler(async (req, res) =>{
     throw new ApiError(401, "Invalid user credentials")
     }
 
-    //access and referesh token //send cookie
+    //access and referesh token/sessionstorage = user dont have to write username password everytime
+    //send cookie
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")

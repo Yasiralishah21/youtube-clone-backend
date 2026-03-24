@@ -17,5 +17,10 @@ import userRouter from "./routes/user.routes.js"
 
 //routes declaration //https://localhost:3000//api/v1/users/register
 app.use("/api/v1/users", userRouter)
+// app.post("/test", (req, res) => {
+//     res.send("Test route working");
+// });
 
 export { app }
+
+// console.log("APP FILE LOADED");

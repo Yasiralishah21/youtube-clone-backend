@@ -1,31 +1,3 @@
-// import { asyncHandler } from "../utils/asyncHandler.js"
-// import apiError from "../utils/ApiErrors.js"
-// import {user} from "../models/user.model.js     "
-
-// //register a user - our problem
-// const registerUser = asyncHandler (async (req, res) => {
-//     // res.status(200).json({
-//     //     message: "registerd user"   //TESTING
-//     // })
-
-//      const {fullName, email, username, password} = req.body
-//      console.log(email);
-
-//      //we can check like this, if else and check all and this is what beginners do
-//     //  if (fullName === "") {
-//     //     throw new apiError(400, "fullname is required")
-//     //  }
-
-//      //pro level method //some methods return true or false.
-//      if ([fullName, email, username, password].some((field)=> field?.trim() === "")) {
-//       throw new apiError(400, "all fields are required")  
-//      }
-// })
-
-
-// export {registerUser}
-
-
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiErrors.js"
 import { User} from "../models/user.model.js"
@@ -48,6 +20,7 @@ const generateAccessAndRefereshTokens = async(userId) =>{
 
 
     } catch (error) {
+        console.log("TOKEN ERROR:", error);
         throw new ApiError(500, "Something went wrong while generating referesh and access token")
     }
 }
@@ -130,41 +103,37 @@ const registerUser = asyncHandler( async (req, res) => {
 
 } )
 
-const loginUser = asyncHandler(async (req, res) =>{
-    // req body -> data
-    // username or email
-    //find the user
-    //password check
-    //access and referesh token
-    //send cookie
+const loginUser = asyncHandler(async (req, res) =>{ 
 
+    // req body -> data
     const {email, username, password} = req.body
     console.log(email);
 
-    if (!username && !email) {
-        throw new ApiError(400, "username or email is required")
-    }
-    
-    // Here is an alternative of above code based on logic discussed in video:
-    // if (!(username || email)) {
+    // username or email
+    // if (!username && !email) {
     //     throw new ApiError(400, "username or email is required")
-        
     // }
+    // Here is an alternative of above code based on logic discussed in video:
+    if (!(username || email)) {
+        throw new ApiError(400, "username or email is required")
+        
+    }
 
+    //find the user
     const user = await User.findOne({
         $or: [{username}, {email}]
     })
-
     if (!user) {
         throw new ApiError(404, "User does not exist")
     }
 
+    //password check
    const isPasswordValid = await user.isPasswordCorrect(password)
-
    if (!isPasswordValid) {
     throw new ApiError(401, "Invalid user credentials")
     }
 
+    //access and referesh token //send cookie
    const {accessToken, refreshToken} = await generateAccessAndRefereshTokens(user._id)
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
@@ -190,6 +159,7 @@ const loginUser = asyncHandler(async (req, res) =>{
 
 })
 
+//write middleware code first (auth.middleware.js)
 const logoutUser = asyncHandler(async(req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,

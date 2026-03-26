@@ -13,4 +13,4 @@ const connectDB = async () => {
 }
 export default connectDB
 
-//data can be taken as urls or in req.body (as in user.controller.js from db)
+//data can be taken as urls or in req.body (as in user.controller.js from db)  .

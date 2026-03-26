@@ -366,14 +366,15 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
     if (!username?.trim()) {
         throw new ApiError(400, "username is missing")
     }
-
+  
+    //PIPELINES - PIPELINING AGGREGATION MONGODB
     const channel = await User.aggregate([
-        {
+        { //matched the user if he's there or not
             $match: {
                 username: username?.toLowerCase()
             }
         },
-        {
+        { //subscribers count by counting same channel doucment diagram
             $lookup: {
                 from: "subscriptions",
                 localField: "_id",
@@ -381,7 +382,7 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
                 as: "subscribers"
             }
         },
-        {
+        { //subscribed count by counting subscriber count object diagram
             $lookup: {
                 from: "subscriptions",
                 localField: "_id",
@@ -389,7 +390,7 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
                 as: "subscribedTo"
             }
         },
-        {
+        { //added fields to original user object in FIGMA DIAGRAM model
             $addFields: {
                 subscribersCount: {
                     $size: "$subscribers"
@@ -406,7 +407,7 @@ const getUserChannelProfile = asyncHandler(async(req, res) => {
                 }
             }
         },
-        {
+        { //passing the values by flag = 1(on) - will show only these fields
             $project: {
                 fullName: 1,
                 username: 1,

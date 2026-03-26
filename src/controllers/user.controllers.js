@@ -359,7 +359,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
     )
 })
 
-
+//pipelines (aggregation)
 const getUserChannelProfile = asyncHandler(async(req, res) => {
     const {username} = req.params
 
